@@ -1,0 +1,45 @@
+version: '3.8'
+
+networks:
+  traefik:
+    external: true
+
+services:
+  traefik:
+    image: traefik:v2.3
+    command:
+      - --providers.docker=true
+      - --providers.docker.swarmMode=true
+      - --providers.docker.exposedByDefault=false
+      - --providers.docker.network=traefik
+      - --entrypoints.http.address=:80
+      - --log
+      - --api=true
+    ports:
+      - 80:80
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - traefik
+    logging:
+      driver: json-file
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == manager
+      update_config:
+        order: start-first
+      restart_policy:
+        condition: on-failure
+        delay: 2s
+        max_attempts: 5
+        window: 120s
+      labels:
+        - "traefik.enable=true"
+        - "traefik.docker.network=traefik"
+        - "traefik.http.routers.traefik.entrypoints=http"
+        - "traefik.http.routers.traefik.rule=Host(`traefik.georgeff.io`)"
+        - "traefik.http.routers.traefik.service=api@internal"
+        - "traefik.http.services.traefik.loadbalancer.server.port=8080"

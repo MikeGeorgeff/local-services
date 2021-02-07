@@ -1,0 +1,22 @@
+version: '3.8'
+
+networks:
+  traefik:
+    external: true
+
+services:
+  registry:
+    image: registry:2
+    networks:
+      - traefik
+    volumes:
+      - /home/mike/container_data/registry:/var/lib/registry
+    deploy:
+      mode: replicated
+      replicas: 1
+      labels:
+        - "traefik.enable=true"
+        - "traefik.docker.network=traefik"
+        - "traefik.http.routers.registry.entrypoints=http"
+        - "traefik.http.routers.registry.rule=Host(`registry.georgeff.io`)"
+        - "traefik.http.services.registry.loadbalancer.server.port=5000"
