@@ -1,0 +1,41 @@
+version: '3.8'
+
+networks:
+  traefik:
+    external: true
+
+volumes:
+  netdata_lib:
+  netdata_cache:
+
+services:
+  agent:
+    image: netdata/netdata
+    hostname: netdata.georgeff.io
+    cap_add:
+      - SYS_PTRACE
+    security_opt:
+      - apparmor:unconfined
+    networks:
+      - traefik
+    volumes:
+      - $NETDATA_DATA/config:/etc/netdata:ro
+      - netdata_lib:/var/lib/netdata
+      - netdata_cache:/var/cache/netdata
+      - /etc/passwd:/host/etc/passwd:ro
+      - /etc/group:/host/etc/group:ro
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /etc/os-release:/host/etc/os-release:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    environment:
+      - DOCKER_USER=root
+    deploy:
+      mode: replicated
+      replicas: 1
+      labels:
+        - "traefik.enable=true"
+        - "traefik.docker.network=traefik"
+        - "traefik.http.routers.netdata.entrypoints=http"
+        - "traefik.http.routers.netdata.rule=Host(`netdata.georgeff.io`)"
+        - "traefik.http.services.netdata.loadbalancer.server.port=19999"

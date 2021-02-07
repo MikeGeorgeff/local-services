@@ -1,0 +1,3 @@
+#!/bin/bash
+
+export NETDATA_DATA=/home/mike/container_data/netdata
