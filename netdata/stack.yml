@@ -29,7 +29,7 @@ services:
       - /etc/os-release:/host/etc/os-release:ro
       - /var/run/docker.sock:/var/run/docker.sock:ro
     environment:
-      - DOCKER_USER=root
+      - DOCKER_USR=root
     deploy:
       mode: replicated
       replicas: 1
