@@ -19,7 +19,7 @@ services:
     networks:
       - traefik
     volumes:
-      - $NETDATA_DATA/config:/etc/netdata:ro
+      - $NETDATA_DATA/netdata:/etc/netdata:ro
       - netdata_lib:/var/lib/netdata
       - netdata_cache:/var/cache/netdata
       - /etc/passwd:/host/etc/passwd:ro
