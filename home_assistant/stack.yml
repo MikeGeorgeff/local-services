@@ -10,9 +10,8 @@ services:
     networks:
       - traefik
     volumes:
-      -./configuration.yml:/config
+      - /home/mike/container_data/home_assistant:/config
       - /etc/localtime:/etc/localtime:ro
-    network_mode: host
     deploy:
       mode: replicated
       replicas: 1
