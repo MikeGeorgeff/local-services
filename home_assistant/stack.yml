@@ -1,0 +1,24 @@
+version: '3.8'
+
+networks:
+  traefik:
+    external: true
+
+services:
+  home_assistant:
+    image: homeassistant/home-assistant:stable
+    networks:
+      - traefik
+    volumes:
+      -./configuration.yml:/config
+      - /etc/localtime:/etc/localtime:ro
+    network_mode: host
+    deploy:
+      mode: replicated
+      replicas: 1
+      labels:
+        - "traefik.enable=true"
+        - "traefik.docker.network=traefik"
+        - "traefik.http.routers.assistant.entrypoints=http"
+        - "traefik.http.routers.assistant.rule=Host(`assistant.georgeff.io`)"
+        - "traefik.http.services.assistant.loadbalancer.server.port=8123"
