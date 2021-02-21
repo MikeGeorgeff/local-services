@@ -22,6 +22,7 @@ services:
     environment:
       POSTGRES_USER: mike
       POSTGRES_PASSWORD: secret
+      POSTGRES_DB: postgres
     networks:
       - db
     volumes:
