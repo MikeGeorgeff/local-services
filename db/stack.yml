@@ -1,0 +1,30 @@
+version: '3.8'
+
+networks:
+  db:
+    external: true
+
+volumes:
+  redis_data:
+  pgsql_data:
+
+services:
+  redis:
+    image: redis:6-alpine
+    networks:
+      - db
+    volumes:
+      - redis_data:/data
+    ports:
+      - "6379:6379"
+  pgsql:
+    image: postgres:12-alpine
+    environment:
+      POSTGRES_USER: mike
+      POSTGRES_PASSWORD: secret
+    networks:
+      - db
+    volumes:
+      - pgsql_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
